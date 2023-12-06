@@ -73,7 +73,7 @@ public class Player_Move : MonoBehaviour
             knife.transform.gameObject.GetComponent<CapsuleCollider>().enabled = true;
             isAttack = false;
         }
-        Invoke("disAttack", 1.5f);
+        Invoke("disAttack", 2f);
     }
 
     private void disAttack()

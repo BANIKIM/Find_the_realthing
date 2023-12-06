@@ -437,6 +437,7 @@ GameObject:
   - component: {fileID: 1395936637}
   - component: {fileID: 1395936636}
   - component: {fileID: 1395936635}
+  - component: {fileID: 1395936642}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -513,6 +514,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eae04a4fe514bf4789aec1bdb93100b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   _maxLateralSpeed: 10
   _maxRiseSpeed: 20
   _maxFallSpeed: 20
@@ -565,7 +569,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1395936634}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 60
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 0
@@ -589,6 +593,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1395936642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395936634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2a20d5262a88ae4ba25343c302e79d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 0}
 --- !u!1 &2057113399
 GameObject:
   m_ObjectHideFlags: 0
@@ -1641,6 +1658,7 @@ GameObject:
   - component: {fileID: 1453028423894821433}
   - component: {fileID: 1453028423895787769}
   - component: {fileID: 1453028423897724474}
+  - component: {fileID: 1453028423897724475}
   m_Layer: 0
   m_Name: KnifeDefault
   m_TagString: Attack
@@ -1662,6 +1680,20 @@ CapsuleCollider:
   m_Height: 0.68
   m_Direction: 2
   m_Center: {x: -0.000000010765289, y: 0, z: 0.45}
+--- !u!136 &1453028423897724475
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1453028423897724473}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 0
+  m_Radius: 0.15
+  m_Height: 1.51
+  m_Direction: 2
+  m_Center: {x: -0.000000010765289, y: 0, z: 0.72}
 --- !u!4 &1453028423898212889
 Transform:
   m_ObjectHideFlags: 0
