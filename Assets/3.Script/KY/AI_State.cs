@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AI_State : MonoBehaviour
@@ -31,6 +29,5 @@ public class AI_State : MonoBehaviour
     private void OnDie()
     {
         isDie = true;
-        animator.SetTrigger("Die");
     }
 }
