@@ -6,25 +6,33 @@ using Mirror;
 public class CharacterMover : NetworkBehaviour
 {
     public bool isMoveable;
-    [SyncVar]
-    public float walkSpeed = 2f;
 
+    [SyncVar]
     [SerializeField] private float lookSensitivity;
-    [SerializeField]
-    private float cameraRotationLimit;
+    [SyncVar]
+    [SerializeField] private float cameraRotationLimit;
+
     private float currentCameraRotationX = 0;
     private Camera theCamera;
 
     private Rigidbody playerRigid;
 
+    [SyncVar]
+    public float walkSpeed = 2f;
+
     private void Start()
     {
         playerRigid = GetComponent<Rigidbody>();
         // 캡슐 콜라이더의 경우 중심을 적절히 조절해야 할 수 있습니다.
-        Camera cam = Camera.main;
-        cam.transform.SetParent(transform);
-        cam.transform.localPosition = new Vector3(0f, 5f, -9f);
-        cam.orthographicSize = 2.5f;
+
+        if (hasAuthority)
+        {
+            Camera cam = Camera.main;
+            cam.transform.SetParent(transform);
+            cam.transform.localPosition = new Vector3(0f, 5f, -9f);
+            cam.orthographicSize = 2.5f;
+        }
+     
 
 
     }
@@ -71,10 +79,13 @@ public class CharacterMover : NetworkBehaviour
     }*/
     private void PlayerRotation()
     {
-        //좌우 플레이어 회전 
-        float _yRotation = Input.GetAxisRaw("Mouse X");
+        if (hasAuthority && isMoveable)
+        {
+            //좌우 플레이어 회전 
+            float _yRotation = Input.GetAxisRaw("Mouse X");
 
-        Vector3 _playerRotationY = new Vector3(0f, _yRotation, 0f) * lookSensitivity;
-        playerRigid.MoveRotation(playerRigid.rotation * Quaternion.Euler(_playerRotationY));
+            Vector3 _playerRotationY = new Vector3(0f, _yRotation, 0f) * lookSensitivity;
+            playerRigid.MoveRotation(playerRigid.rotation * Quaternion.Euler(_playerRotationY));
+        }
     }
 }
