@@ -575,7 +575,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &317479272
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2653,7 +2653,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1458068745
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3261,9 +3261,9 @@ MonoBehaviour:
   autoConnectClientBuild: 0
   sendRate: 60
   offlineScene: Assets/1.Scene/Menu.unity
-  onlineScene: Assets/1.Scene/GameRoom.unity
+  onlineScene: Assets/1.Scene/GameRoom2.unity
   transport: {fileID: 0}
-  networkAddress: localhost
+  networkAddress: 172.30.1.82
   maxConnections: 100
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
@@ -3272,7 +3272,8 @@ MonoBehaviour:
     type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 6594232831250481228, guid: fdec0314f0ee54d49a487805950147ac, type: 3}
   snapshotSettings:
     bufferTimeMultiplier: 2
     bufferLimit: 32
@@ -3290,7 +3291,7 @@ MonoBehaviour:
   minPlayers: 1
   roomPlayerPrefab: {fileID: 6587428475413603334, guid: 135d7b2eb81e3924e8c8ce1c4e234180,
     type: 3}
-  RoomScene: Assets/1.Scene/GameRoom.unity
+  RoomScene: Assets/1.Scene/GameRoom2.unity
   GameplayScene: Assets/1.Scene/Map_hurdoyun.unity
   _allPlayersReady: 0
   roomSlots: []

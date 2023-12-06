@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Mirror;
 
 namespace ECM.Components
 {
@@ -20,7 +21,7 @@ namespace ECM.Components
     /// and feed this information to the 'CharacterMovement' component, which perform the movement. 
     /// </summary>
 
-    public sealed class CharacterMovement : MonoBehaviour
+    public sealed class CharacterMovement : NetworkBehaviour
     {
         #region EDITOR EXPOSED FIELDS
 
@@ -1602,6 +1603,7 @@ namespace ECM.Components
                 cachedRigidbody.MovePosition(p);
                 cachedRigidbody.MoveRotation(q);
             }
+          
         }
 
         #endregion
