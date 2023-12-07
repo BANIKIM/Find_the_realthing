@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ground
   - Attack
+  - Will
   layers:
   - Default
   - TransparentFX
