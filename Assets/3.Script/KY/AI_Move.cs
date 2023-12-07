@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using Mirror;
 
 public class AI_Move : MonoBehaviour
 {

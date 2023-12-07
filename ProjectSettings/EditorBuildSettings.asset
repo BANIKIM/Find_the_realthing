@@ -6,12 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/1.Scene/Menu.unity
-    guid: decb56471a525714d80c31fba6540a71
-  - enabled: 1
-    path: Assets/1.Scene/GameRoom2.unity
-    guid: e6a03304dadfa504b82560dd88116b6c
-  - enabled: 1
-    path: Assets/1.Scene/Map_hurdoyun.unity
-    guid: cad5658815ea96e4cad938b982542718
+    path: Assets/1.Scene/Map_main.unity
+    guid: a6541b6249dfd264c9eec7ade566e5ae
   m_configObjects: {}

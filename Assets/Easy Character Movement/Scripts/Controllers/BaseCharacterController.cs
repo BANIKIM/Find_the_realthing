@@ -2,6 +2,7 @@
 using ECM.Helpers;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Mirror;
 
 namespace ECM.Controllers
 {
@@ -13,7 +14,7 @@ namespace ECM.Controllers
     /// can easily be modified or completely replaced overriding this related methods in a derived class.
     /// </summary>
 
-    public class BaseCharacterController : MonoBehaviour
+    public class BaseCharacterController : NetworkBehaviour
     {
         #region EDITOR EXPOSED FIELDS
 
@@ -514,6 +515,7 @@ namespace ECM.Controllers
 
         private void Pause()
         {
+            if (!isLocalPlayer) return;
             if (pause && !isPaused)
             {
                 // Pause 
@@ -538,6 +540,7 @@ namespace ECM.Controllers
 
         public void RotateTowards(Vector3 direction, bool onlyLateral = true)
         {
+            if (!isLocalPlayer) return;
             movement.Rotate(direction, angularSpeed, onlyLateral);
         }
 
@@ -548,6 +551,7 @@ namespace ECM.Controllers
 
         public void RotateTowardsMoveDirection(bool onlyLateral = true)
         {
+            if (!isLocalPlayer) return;
             RotateTowards(moveDirection, onlyLateral);
         }
 
@@ -558,6 +562,7 @@ namespace ECM.Controllers
 
         public void RotateTowardsVelocity(bool onlyLateral = true)
         {
+            if (!isLocalPlayer) return;
             RotateTowards(movement.velocity, onlyLateral);
         }
 
@@ -567,6 +572,8 @@ namespace ECM.Controllers
 
         protected virtual void Jump()
         {
+            if (!isLocalPlayer) return;
+
             // Update _isJumping flag state
 
             if (isJumping)
@@ -622,6 +629,7 @@ namespace ECM.Controllers
 
         protected virtual void MidAirJump()
         {
+            if (!isLocalPlayer) return;
             // Reset mid-air jumps counter
 
             if (_midAirJumpCount > 0 && movement.isGrounded)
@@ -663,6 +671,7 @@ namespace ECM.Controllers
 
         protected virtual void UpdateJumpTimer()
         {
+            if (!isLocalPlayer) return;
             if (!_updateJumpTimer)
                 return;
 
@@ -699,6 +708,7 @@ namespace ECM.Controllers
         
         protected virtual void Crouch()
         {
+            if (!isLocalPlayer) return;
             // If crouching behaviour is disabled, return
 
             if (!canCrouch)
@@ -770,6 +780,7 @@ namespace ECM.Controllers
 
         protected virtual void Move()
         {
+            if (!isLocalPlayer) return;
             // Apply movement
 
             // If using root motion and root motion is being applied (eg: grounded),
@@ -914,6 +925,7 @@ namespace ECM.Controllers
 
         public virtual void FixedUpdate()
         {
+            if (!isLocalPlayer) return;
             // Pause / resume character
 
             Pause();
@@ -934,6 +946,7 @@ namespace ECM.Controllers
 
         public virtual void Update()
         {
+            if (!isLocalPlayer) return;
             // Handle input
 
             HandleInput();

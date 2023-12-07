@@ -81,6 +81,8 @@ namespace ECM.Components
 
         // The buffer to store the overlap test results into.
 
+        public Camera Player_camera;
+
         private static readonly Collider[] OverlappedColliders = new Collider[8];
         
         private Coroutine _lateFixedUpdateCoroutine;
@@ -1692,7 +1694,10 @@ namespace ECM.Components
         public void OnEnable()
         {
             // Initialize LateFixedUpdate coroutine
-
+            if(!isLocalPlayer)
+            {
+                Player_camera.gameObject.SetActive(false);
+            }
             if (_lateFixedUpdateCoroutine != null)
                 StopCoroutine(_lateFixedUpdateCoroutine);
 

@@ -6,26 +6,31 @@ public class Player_Die : MonoBehaviour
 {
 
     public Animator anim;
+    public CharacterController coll;
+    public Rigidbody rig;
     private bool isDie = false;
 
     void Start()
     {
-        anim = FindObjectOfType<Animator>();
-
+        anim = transform.GetChild(1).GetComponent<Animator>();
+        coll = transform.GetComponent<CharacterController>();
+        rig = transform.GetComponent<Rigidbody>();
     }
 
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("Attack") && !isDie)
+        if (other.gameObject.CompareTag("Attack") && !isDie)
         {
+            Debug.Log("¸ÂÀ½ Ä®");
             anim.SetTrigger("isDie");
             isDie = true;
 
-            CapsuleCollider coll = transform.GetComponent<CapsuleCollider>();
-            Rigidbody rig = transform.GetComponent<Rigidbody>();
-            coll.isTrigger = true;
+
+            coll.enabled = false;
             rig.isKinematic = true;
+
+           // transform.gameObject.SetActive(false);
 
         }
     }
