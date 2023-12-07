@@ -13,12 +13,21 @@ public class Player_Move : NetworkBehaviour
     public GameObject knife;
     private bool isAttack = true;
     private float AttackTime = 0f;
+
+    public Camera playerCamera;
+
     // Start is called before the first frame update
     void Start()
     {
         anim = GameObject.Find("Player_modle").transform.GetComponent<Animator>(); ;
         controller = FindObjectOfType<BaseCharacterController>();
         knife = transform.GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetChild(3).gameObject;
+
+        if (!isLocalPlayer)
+        {
+            playerCamera.gameObject.SetActive(false);
+        }
+
     }
 
     // Update is called once per frame
