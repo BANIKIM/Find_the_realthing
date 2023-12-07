@@ -141,7 +141,9 @@ public class CharacterMover : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Attack") && !isDie)
+        if (!isServer) return; // Only process this on the server
+
+        if (other.CompareTag("Attack") && !isDie)
         {
             isDie = true;
             // Set isDie on the server so it gets synchronized to all clients
