@@ -8,16 +8,16 @@ public class Player_Move : MonoBehaviour
 
     public Animator anim;
     public BaseCharacterController controller;
+    [Header("Player")]
     public GameObject knife;
     private bool isAttack = true;
     private float AttackTime = 0f;
     // Start is called before the first frame update
     void Start()
     {
-        anim = FindObjectOfType<Animator>();
+        anim = GameObject.Find("Player_modle").transform.GetComponent<Animator>(); ;
         controller = FindObjectOfType<BaseCharacterController>();
-        knife = GameObject.FindWithTag("Attack");
-
+        knife = transform.GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetChild(3).gameObject;
     }
 
     // Update is called once per frame
@@ -73,7 +73,7 @@ public class Player_Move : MonoBehaviour
             knife.transform.gameObject.GetComponent<CapsuleCollider>().enabled = true;
             isAttack = false;
         }
-        Invoke("disAttack", 2f);
+        Invoke("disAttack", 3f);
     }
 
     private void disAttack()
