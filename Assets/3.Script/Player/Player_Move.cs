@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ECM.Controllers;
+using Mirror;
 
-public class Player_Move : MonoBehaviour
+public class Player_Move : NetworkBehaviour
 {
 
     public Animator anim;
@@ -23,6 +24,11 @@ public class Player_Move : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
+
         OnRun();
         OnJump();
         if (isAttack)
