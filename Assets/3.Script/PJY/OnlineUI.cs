@@ -9,6 +9,8 @@ public class OnlineUI : MonoBehaviour
     [SerializeField]
     private InputField nicknameInputField;
     [SerializeField]
+    private InputField ipInputField; // 새로 추가된 InputField
+    [SerializeField]
     private GameObject creatRoomUI;
 
     public void onClickCreateRoomButton()
@@ -24,17 +26,18 @@ public class OnlineUI : MonoBehaviour
             nicknameInputField.GetComponent<Animator>().SetTrigger("on");
         }
     }
+
     public void OnClickEnterGameRoomButton()
     {
         if (nicknameInputField.text != "")
         {
-            var manager = RoomManager.singleton;
-            manager.StartClient();
+            // 사용자로부터 입력 받은 IP 주소로 RoomManager의 네트워크 주소 설정
+            RoomManager.singleton.networkAddress = ipInputField.text;
+            RoomManager.singleton.StartClient();
         }
         else
         {
             nicknameInputField.GetComponent<Animator>().SetTrigger("on");
         }
-
     }
 }
