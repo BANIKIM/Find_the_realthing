@@ -6,12 +6,12 @@ using Mirror;
 
 public class Player_Move : NetworkBehaviour
 {
-    [SyncVar(hook = nameof(OnAnimationStateUpdated))]
-    //[SyncVar] Vector3 syncPosition;
+    //[SyncVar(hook = nameof(OnAnimationStateUpdated))]
+    [SyncVar] private bool isRunning;
+    [SyncVar] private bool isJumping;
+    [SyncVar] private bool isAtking;
 
-    private bool isRunning;
-    private bool isJumping;
-    private bool isAtking;
+    [SyncVar] Vector3 syncPosition;
 
     public Animator anim;
     public BaseCharacterController controller;
@@ -86,19 +86,21 @@ public class Player_Move : NetworkBehaviour
     private void FixedUpdate()
     {
         TransmitPosition();
-        //LerpPosition();
+        LerpPosition();
     }
 
     [Command]
-    //private void CmdProvidePositionToServer(Vector3 pos)
-    //{
-    //    syncPosition = pos;
-    //}
-
+    private void CmdProvidePositionToServer(Vector3 pos)
+    {
+        syncPosition = pos;
+    }
+    [ClientCallback]
     private void CmdSetAnimationState(bool running)
     {
         isRunning = running;
     }
+
+    [ClientCallback]
     private void CmdSetAnimationState_j(bool jumping)
     {
         isJumping = jumping;
@@ -108,6 +110,7 @@ public class Player_Move : NetworkBehaviour
         isAtking = atking;
     }
 
+    [ClientCallback]
     private void OnAnimationStateUpdated(bool oldValue, bool newValue)
     {
         if (newValue)
@@ -127,16 +130,16 @@ public class Player_Move : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            //CmdProvidePositionToServer(transform.position);
+            CmdProvidePositionToServer(transform.position);
         }
     }
-    //void LerpPosition()
-    //{
-    //    if (!isLocalPlayer)
-    //    {
-    //        transform.position = Vector3.Lerp(transform.position, syncPosition, Time.deltaTime * 10);
-    //    }
-    //}
+    void LerpPosition()
+    {
+        if (!isLocalPlayer)
+        {
+            transform.position = Vector3.Lerp(transform.position, syncPosition, Time.deltaTime * 10);
+        }
+    }
     private bool OnRun()
     {
         if (Input.GetKey(KeyCode.W))
