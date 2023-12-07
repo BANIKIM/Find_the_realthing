@@ -6,7 +6,7 @@ using Mirror;
 public class RoomManager : NetworkRoomManager
 {
     // 간격 조절을 위한 변수
-    public float spawnInterval = 3f;
+    public float spawnInterval = 1f;
 
     public override void OnRoomServerConnect(NetworkConnectionToClient conn)
     {
