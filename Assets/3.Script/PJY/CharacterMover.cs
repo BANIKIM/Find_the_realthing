@@ -53,7 +53,7 @@ public class CharacterMover : NetworkBehaviour
 
     void Update()
     {
-        if (!isLocalPlayer)
+        if (!isLocalPlayer && isDie)
         {
             return;
         }
