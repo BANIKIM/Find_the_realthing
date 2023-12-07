@@ -7,6 +7,8 @@ using Mirror;
 public class Player_Move : NetworkBehaviour
 {
 
+    [SyncVar] Vector3 syncPosition;
+
     public Animator anim;
     public BaseCharacterController controller;
     [Header("Player")]
@@ -58,7 +60,33 @@ public class Player_Move : NetworkBehaviour
 
     }
 
+    private void FixedUpdate()
+    {
+        TransmitPosition();
+        LerpPosition();
+    }
 
+    [Command]
+    void CmdProvidePositionToServer(Vector3 pos)
+    {
+        syncPosition = pos;
+    }
+
+    [ClientCallback]
+    void TransmitPosition()
+    {
+        if (isLocalPlayer)
+        {
+            CmdProvidePositionToServer(transform.position);
+        }
+    }
+    void LerpPosition()
+    {
+        if (!isLocalPlayer)
+        {
+            transform.position = Vector3.Lerp(transform.position, syncPosition, Time.deltaTime * 10);
+        }
+    }
     private void OnRun()
     {
         if (Input.GetKey(KeyCode.W))
