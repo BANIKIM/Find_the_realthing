@@ -6,8 +6,12 @@ using Mirror;
 
 public class Player_Move : NetworkBehaviour
 {
+    [SyncVar(hook = nameof(OnAnimationStateUpdated))]
+    //[SyncVar] Vector3 syncPosition;
 
-    [SyncVar] Vector3 syncPosition;
+    private bool isRunning;
+    private bool isJumping;
+    private bool isAtking;
 
     public Animator anim;
     public BaseCharacterController controller;
@@ -29,7 +33,6 @@ public class Player_Move : NetworkBehaviour
         {
             playerCamera.gameObject.SetActive(false);
         }
-
     }
 
     // Update is called once per frame
@@ -40,12 +43,32 @@ public class Player_Move : NetworkBehaviour
             return;
         }
 
+        bool isRunningLocal = OnRun();
+        bool isJumpingLocal = OnJump();
+        bool isAtkingLocal = OnAttack();
+
+        if (isRunning != isRunningLocal)
+        {
+            isRunning = isRunningLocal;
+            CmdSetAnimationState(isRunning);
+        }
+        if (isJumping != isJumpingLocal)
+        {
+            isJumping = isJumpingLocal;
+            CmdSetAnimationState_j(isJumping);
+        }
+        if (isAtking != isAtkingLocal)
+        {
+            isAtking = isAtkingLocal;
+            CmdSetAnimationState_a(isAtking);
+        }
+
         OnRun();
         OnJump();
+
         if (isAttack)
         {
             OnAttack();
-
         }
         else if (!isAttack)
         {
@@ -63,13 +86,40 @@ public class Player_Move : NetworkBehaviour
     private void FixedUpdate()
     {
         TransmitPosition();
-        LerpPosition();
+        //LerpPosition();
     }
 
     [Command]
-    void CmdProvidePositionToServer(Vector3 pos)
+    //private void CmdProvidePositionToServer(Vector3 pos)
+    //{
+    //    syncPosition = pos;
+    //}
+
+    private void CmdSetAnimationState(bool running)
     {
-        syncPosition = pos;
+        isRunning = running;
+    }
+    private void CmdSetAnimationState_j(bool jumping)
+    {
+        isJumping = jumping;
+    }
+    private void CmdSetAnimationState_a(bool atking)
+    {
+        isAtking = atking;
+    }
+
+    private void OnAnimationStateUpdated(bool oldValue, bool newValue)
+    {
+        if (newValue)
+        {
+            // Set the running animation
+            anim.SetBool("IsRun", true);
+        }
+        else
+        {
+            // Set the idle animation
+            anim.SetBool("IsRun", false);
+        }
     }
 
     [ClientCallback]
@@ -77,52 +127,65 @@ public class Player_Move : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            CmdProvidePositionToServer(transform.position);
+            //CmdProvidePositionToServer(transform.position);
         }
     }
-    void LerpPosition()
-    {
-        if (!isLocalPlayer)
-        {
-            transform.position = Vector3.Lerp(transform.position, syncPosition, Time.deltaTime * 10);
-        }
-    }
-    private void OnRun()
+    //void LerpPosition()
+    //{
+    //    if (!isLocalPlayer)
+    //    {
+    //        transform.position = Vector3.Lerp(transform.position, syncPosition, Time.deltaTime * 10);
+    //    }
+    //}
+    private bool OnRun()
     {
         if (Input.GetKey(KeyCode.W))
         {
             anim.SetBool("isRun", true);
+            return true;
         }
         else
         {
             anim.SetBool("isRun", false);
+            return false;
         }
     }
 
-    private void OnJump()
+    private bool OnJump()
     {
         if (Input.GetKeyDown(KeyCode.Space) && controller.isGrounded)
         {
             anim.SetTrigger("isJump");
+            return true;
+        }
+        else
+        {
+            anim.SetBool("isJump", false);
+            return false;
         }
     }
 
-    private void OnAttack()
+    private bool OnAttack()
     {
         if (Input.GetMouseButtonDown(0))
         {
-
             anim.SetTrigger("isAttack");
             knife.transform.gameObject.GetComponent<CapsuleCollider>().enabled = true;
             isAttack = false;
+            Invoke("disAttack", 3f);
+
+            return true;
         }
-        Invoke("disAttack", 3f);
+        else
+        {
+            anim.SetBool("isAttack", false);
+            return false;
+        }
     }
 
     private void disAttack()
     {
         knife.transform.gameObject.GetComponent<CapsuleCollider>().enabled = false;
     }
-
 
 }
