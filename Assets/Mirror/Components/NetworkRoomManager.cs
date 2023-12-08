@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -22,7 +23,8 @@ namespace Mirror
         {
             public NetworkConnectionToClient conn;
             public GameObject roomPlayer;
-        }
+            
+        } 
 
         [Header("Room Settings")]
         [FormerlySerializedAs("m_ShowRoomGUI")]
@@ -659,6 +661,9 @@ namespace Mirror
 
         #region optional UI
 
+
+        
+
         /// <summary>
         /// virtual so inheriting classes can roll their own
         /// </summary>
@@ -667,12 +672,12 @@ namespace Mirror
             if (!showRoomGUI)
                 return;
 
-            if (NetworkServer.active && Utils.IsSceneActive(GameplayScene))
+            if (NetworkServer.active && Utils.IsSceneActive(GameplayScene) && PlayerPrefs.GetInt("Player") ==1)
             {
-                /*    GUILayout.BeginArea(new Rect(Screen.width - 150f, 10f, 140f, 30f));
-                    if (GUILayout.Button("Return to Room"))
+                //  GUILayout.BeginArea(new Rect(Screen.width - 150f, 10f, 140f, 30f));
+                if (Input.GetKeyDown(KeyCode.Escape))
                         ServerChangeScene(RoomScene);
-                    GUILayout.EndArea();*/
+                   // GUILayout.EndArea();*/
             }
 
             if (Utils.IsSceneActive(RoomScene))
@@ -693,3 +698,4 @@ namespace Mirror
         #endregion
     }
 }
+

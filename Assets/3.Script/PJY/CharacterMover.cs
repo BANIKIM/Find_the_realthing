@@ -156,6 +156,7 @@ public class CharacterMover : NetworkBehaviour
             // Set isDie on the server so it gets synchronized to all clients
             CmdDie();
             gameUI.OnPlayerDie();
+            
         }
     }
 

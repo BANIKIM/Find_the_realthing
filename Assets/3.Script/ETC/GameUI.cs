@@ -10,6 +10,8 @@ public class GameUI : NetworkBehaviour
     public Text playerCountText;
     public GameObject winPanel;
 
+    private bool isGameEnded = false; // 게임 종료 여부를 나타내는 변수
+
     private void Start()
     {
         winPanel = transform.GetChild(1).gameObject;
@@ -24,19 +26,16 @@ public class GameUI : NetworkBehaviour
             CheckWinCondition();
         }
 
-        if (winPanel.activeSelf)
+       /* if (isGameEnded && Input.anyKeyDown) // 게임 종료 후 키 입력 시 새로운 씬으로 이동
         {
-            if (Input.anyKeyDown)
-            {
-                SceneManager.LoadScene("Menu");
-            }
-        }
+            SceneManager.LoadScene("GameRoom2");
+        }*/
     }
 
     [ClientRpc]
     void RpcUpdatePlayerCount(int playerCount)
     {
-        playerCountText.text = $"플레이어 수: {playerCount}/4";
+        playerCountText.text = $"플레이어 수: {PlayerPrefs.GetInt("Player")}/{playerCount}";
     }
 
     [Server]
@@ -67,6 +66,9 @@ public class GameUI : NetworkBehaviour
     void RpcDisplayWinPanel()
     {
         winPanel.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        isGameEnded = true; // 게임 종료 상태로 설정
     }
 
     // 플레이어가 죽었을 때 호출됩니다.
