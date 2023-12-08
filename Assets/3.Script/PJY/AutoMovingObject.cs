@@ -6,7 +6,7 @@ public class AutoMovingObject : NetworkBehaviour
     public float moveRange = 5f; // 이동 범위
     public float minStopTime = 3f; // 이동 멈춤 최소 시간
     public float maxStopTime = 5f; // 이동 멈춤 최대 시간
-    public float walkingSpeed = 7.5f; // 걷기 속도
+    public float walkingSpeed = 4f; // 걷기 속도
     private Vector3 targetPosition;
     private float startTime;
     private bool willTurn = false; // 방향 전환 여부
@@ -69,10 +69,13 @@ public class AutoMovingObject : NetworkBehaviour
         float t = walkingSpeed * Time.deltaTime / distance;
         transform.position = Vector3.Lerp(transform.position, targetPosition, t);
 
+        anim.SetBool("isRun", distance > 0.1f);
+
         if (isColliding)
         {
             // 충돌 중에는 이동 멈춤
             transform.position = targetPosition;
+            anim.SetBool("isRun", false);
         }
         else
         {
