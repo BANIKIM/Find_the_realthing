@@ -81,7 +81,7 @@ public class GameUI : NetworkBehaviour
             PlayerPrefs.SetInt("Player", playerCount); // 플레이어 수 저장
 
             // 플레이어 수 감소 후, 승리 조건 확인
-            CheckWinCondition();
+           Invoke("CheckWinCondition", 2f);
         }
     }
 }
