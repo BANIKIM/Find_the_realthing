@@ -19,6 +19,7 @@ public class CharacterMover : NetworkBehaviour
     private float attackTime = 0f;
     private bool _isRun = false;
 
+    private GameUI gameUI;
 
     [Header("Die")]
     public Animator anim;
@@ -38,7 +39,7 @@ public class CharacterMover : NetworkBehaviour
     {
         characterController = GetComponent<CharacterController>();
         knife = transform.GetChild(1).GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetChild(3).gameObject;
-
+        gameUI = GameUI.FindObjectOfType<GameUI>();
         // Lock cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -124,6 +125,9 @@ public class CharacterMover : NetworkBehaviour
                 attackTime = 0f;
             }
         }
+
+
+
     }
     void OnDieChanged(bool oldValue, bool newValue)
     {
@@ -135,6 +139,8 @@ public class CharacterMover : NetworkBehaviour
 
             coll.enabled = false;
             rig.isKinematic = true;
+
+
         }
     }
 
@@ -149,6 +155,7 @@ public class CharacterMover : NetworkBehaviour
             isDie = true;
             // Set isDie on the server so it gets synchronized to all clients
             CmdDie();
+            gameUI.OnPlayerDie();
         }
     }
 
@@ -156,6 +163,7 @@ public class CharacterMover : NetworkBehaviour
     void CmdDie()
     {
         isDie = true;
+        
     }
 
 
@@ -203,4 +211,5 @@ public class CharacterMover : NetworkBehaviour
     {
         anim.SetBool("isRun", isRunning);
     }
+
 }

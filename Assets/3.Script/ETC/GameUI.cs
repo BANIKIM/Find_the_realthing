@@ -3,61 +3,83 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameUI : NetworkBehaviour
 {
     public Text playerCountText;
     public GameObject winPanel;
 
-    [SyncVar]
-    private int winPlayerCount;
-
     private void Start()
     {
-        if (isClient)
-        {
-            winPanel = transform.GetChild(1).gameObject;
-        }
+        winPanel = transform.GetChild(1).gameObject;
+        SetPlayer();
     }
 
     void Update()
     {
         if (isServer)
         {
-            PlayerCount(); // 플레이어 숫자 확인
-            WinPlayer();
+            UpdatePlayerCount(); // 플레이어 숫자 갱신
+            CheckWinCondition();
         }
-    }
 
-    private void PlayerCount()
-    {
-        // 현재 서버에 접속 중인 플레이어 수를 가져와서 텍스트로 표시
-        if (NetworkServer.active)
+        if (winPanel.activeSelf)
         {
-            int playerCount = NetworkServer.connections.Count;
-            winPlayerCount = playerCount;
-            playerCountText.text = $"플레이어 수: {playerCount}/4";
-        }
-        else
-        {
-            playerCountText.text = "서버가 실행 중이 아닙니다.";
-        }
-    }
-
-    private void WinPlayer()
-    {
-        if (winPlayerCount == 1)
-        {
-            RpcSetActiveWinPanel(true);
+            if (Input.anyKeyDown)
+            {
+                SceneManager.LoadScene("Menu");
+            }
         }
     }
 
     [ClientRpc]
-    void RpcSetActiveWinPanel(bool setActive)
+    void RpcUpdatePlayerCount(int playerCount)
     {
-        if (isClient)
+        playerCountText.text = $"플레이어 수: {playerCount}/4";
+    }
+
+    [Server]
+    void UpdatePlayerCount()
+    {
+        // 네트워크 연결된 플레이어의 수를 가져옵니다.
+        int playerCount = NetworkServer.connections.Count;
+        RpcUpdatePlayerCount(playerCount); // 클라이언트에 플레이어 수 업데이트를 RPC로 전달
+    }
+
+    [Server]
+    void SetPlayer()
+    {
+        // 최초 플레이어 수를 설정합니다.
+        PlayerPrefs.SetInt("Player", NetworkServer.connections.Count);
+    }
+
+    [Server]
+    void CheckWinCondition()
+    {
+        if (PlayerPrefs.GetInt("Player") == 1)
         {
-            winPanel.SetActive(setActive);
+            RpcDisplayWinPanel();
+        }
+    }
+
+    [ClientRpc]
+    void RpcDisplayWinPanel()
+    {
+        winPanel.SetActive(true);
+    }
+
+    // 플레이어가 죽었을 때 호출됩니다.
+    public void OnPlayerDie()
+    {
+        if (isServer)
+        {
+            int playerCount = PlayerPrefs.GetInt("Player");
+            playerCount--; // 플레이어 수 감소
+            PlayerPrefs.SetInt("Player", playerCount); // 플레이어 수 저장
+
+            // 플레이어 수 감소 후, 승리 조건 확인
+            CheckWinCondition();
         }
     }
 }
