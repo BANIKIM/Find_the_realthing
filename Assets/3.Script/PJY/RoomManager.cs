@@ -27,6 +27,6 @@ public class RoomManager : NetworkRoomManager
     {
         // 현재 소환된 플레이어 수에 따라서 x 값을 계산
         int playerCount = NetworkServer.connections.Count;
-        return playerCount * spawnInterval;
+        return playerCount * spawnInterval-2f;
     }
 }
