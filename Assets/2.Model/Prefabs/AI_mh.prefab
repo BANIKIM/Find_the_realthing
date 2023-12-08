@@ -4218,43 +4218,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d58ca67e8d59dd4686b87360cf2eaf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TargetPos:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  TargetPos: []
 --- !u!195 &5130118274847259132
 NavMeshAgent:
   m_ObjectHideFlags: 0

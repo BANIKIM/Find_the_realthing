@@ -3,89 +3,214 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
+[RequireComponent(typeof(CharacterController))]
+
 public class CharacterMover : NetworkBehaviour
 {
-    public bool isMoveable;
+    public float walkingSpeed = 4f;
+    public float runningSpeed = 6f;
+    public float jumpSpeed = 5f;
+    public float gravity = 20.0f;
+    public Camera playerCamera;
+    public float lookSpeed = 2f;
+    public float lookXLimit = 45f;
+    public GameObject knife;
+    private bool isAttack = true;
+    private float attackTime = 0f;
+    private bool _isRun = false;
 
-    [SyncVar]
-    [SerializeField] private float lookSensitivity;
-    [SyncVar]
-    [SerializeField] private float cameraRotationLimit;
+    private GameUI gameUI;
 
-    private float currentCameraRotationX = 0;
-    private Camera theCamera;
+    [Header("Die")]
+    public Animator anim;
+    public CharacterController coll;
+    public Rigidbody rig;
+    [SyncVar(hook = nameof(OnDieChanged))]
+    private bool isDie = false;
 
-    private Rigidbody playerRigid;
+    CharacterController characterController;
+    Vector3 moveDirection = Vector3.zero;
+    float rotationX = 0;
 
-    [SyncVar]
-    public float walkSpeed = 2f;
+    [HideInInspector]
+    public bool canMove = true;
 
-    private void Start()
+    void Start()
     {
-        playerRigid = GetComponent<Rigidbody>();
-        // 캡슐 콜라이더의 경우 중심을 적절히 조절해야 할 수 있습니다.
-
-        if (hasAuthority)
+        characterController = GetComponent<CharacterController>();
+        knife = transform.GetChild(1).GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetChild(3).gameObject;
+        gameUI = GameUI.FindObjectOfType<GameUI>();
+        // Lock cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        anim = transform.GetChild(1).GetComponent<Animator>();
+        coll = transform.GetComponent<CharacterController>();
+        rig = transform.GetComponent<Rigidbody>();
+        if (!isLocalPlayer)
         {
-            Camera cam = Camera.main;
-            cam.transform.SetParent(transform);
-            cam.transform.localPosition = new Vector3(0f, 5f, -9f);
-            cam.orthographicSize = 2.5f;
-        }
-     
-
-
-    }
-
-    private void FixedUpdate()
-    {
-        Move();
-        //CameraRotation();
-        PlayerRotation();
-    }
-
-    private void Move()
-    {
-        if (hasAuthority && isMoveable)
-        {
-            
-            
-                float _moveDirX = Input.GetAxisRaw("Horizontal");
-                float _moveDirZ = Input.GetAxisRaw("Vertical");
-
-                Vector3 _moveHorizontal = transform.right * _moveDirX;
-                Vector3 _moveVertical = transform.forward * _moveDirZ;
-
-                Vector3 _velocity = (_moveHorizontal + _moveVertical).normalized * walkSpeed;
-
-                playerRigid.MovePosition(transform.position + _velocity * Time.deltaTime);
-
-                //(0,0,1)+(1,0,0)
-                //(1,0,1)=2
-                //(0.5,0,0.5)=1
-            
+            playerCamera.gameObject.SetActive(false);
         }
     }
-/*    private void CameraRotation()
-    {
-        //상하 카메라 회전
 
-        float _xRotation = Input.GetAxisRaw("Mouse Y");
-        float _cameraRotationX = _xRotation * lookSensitivity;
-        currentCameraRotationX -= _cameraRotationX;                    //-45                  45
-        currentCameraRotationX = Mathf.Clamp(currentCameraRotationX, -cameraRotationLimit, cameraRotationLimit);
-
-        theCamera.transform.localEulerAngles = new Vector3(currentCameraRotationX, 0f, 0f);
-    }*/
-    private void PlayerRotation()
+    void Update()
     {
-        if (hasAuthority && isMoveable)
+        if (!isLocalPlayer )
         {
-            //좌우 플레이어 회전 
-            float _yRotation = Input.GetAxisRaw("Mouse X");
+            return;
+        }
+        if (isDie) return;
+        // We are grounded, so recalculate move direction based on axes
+        Vector3 forward = transform.TransformDirection(Vector3.forward);
+        Vector3 right = transform.TransformDirection(Vector3.right);
 
-            Vector3 _playerRotationY = new Vector3(0f, _yRotation, 0f) * lookSensitivity;
-            playerRigid.MoveRotation(playerRigid.rotation * Quaternion.Euler(_playerRotationY));
+        // Press Left Shift to run
+        bool isRunning = Input.GetKey(KeyCode.LeftShift);
+        float curSpeedX = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Vertical") : 0;
+        float curSpeedY = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Horizontal") : 0;
+        if ((curSpeedX != 0f || curSpeedY != 0) && !_isRun)
+        {
+            _isRun = true;
+            CmdSetIsRun(true);
+        }
+        else if ((curSpeedX == 0f && curSpeedY == 0) && _isRun)
+        {
+            _isRun = false;
+            CmdSetIsRun(false);
+        }
+        float movementDirectionY = moveDirection.y;
+        moveDirection = (forward * curSpeedX) + (right * curSpeedY);
+
+        if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
+        {
+            moveDirection.y = jumpSpeed;
+            anim.SetTrigger("isJump");
+        }
+        else
+        {
+            moveDirection.y = movementDirectionY;
+        }
+
+        // Apply gravity. Gravity is multiplied by deltaTime twice (once here, and once below
+        // when the moveDirection is multiplied by deltaTime). This is because gravity should be applied
+        // as an acceleration (ms^-2)
+        if (!characterController.isGrounded)
+        {
+            moveDirection.y -= gravity * Time.deltaTime;
+        }
+
+        // Move the controller
+        characterController.Move(moveDirection * Time.deltaTime);
+
+        // Player and Camera rotation
+        if (canMove)
+        {
+            rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
+            rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
+            playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+            transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+        }
+
+
+
+        if (isAttack)
+        {
+            OnAttack();
+        }
+        else if (!isAttack)
+        {
+            attackTime += Time.deltaTime;
+            if (attackTime > 2f)
+            {
+                isAttack = true;
+                attackTime = 0f;
+            }
+        }
+
+
+
+    }
+    void OnDieChanged(bool oldValue, bool newValue)
+    {
+        if (newValue && !oldValue)
+        {
+            anim.SetTrigger("isDie");
+
+            // Disable collision and physics for the character when it dies
+
+            coll.enabled = false;
+            rig.isKinematic = true;
+
+
         }
     }
+
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!isServer) return; // Only process this on the server
+
+        if (other.CompareTag("Attack") && !isDie)
+        {
+            isDie = true;
+            // Set isDie on the server so it gets synchronized to all clients
+            CmdDie();
+            gameUI.OnPlayerDie();
+            
+        }
+    }
+
+    [Command]
+    void CmdDie()
+    {
+        isDie = true;
+        
+    }
+
+
+    private void OnAttack()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            CmdAttack();
+        }
+    }
+
+    [Command]
+    private void CmdAttack()
+    {
+        RpcDoAttack();
+    }
+
+    [ClientRpc]
+    private void RpcDoAttack()
+    {
+        knife.transform.gameObject.GetComponent<CapsuleCollider>().enabled = true;
+        isAttack = false;
+        goAttack();
+        Invoke("disAttack", 1.5f);
+    }
+
+    private void goAttack()
+    {
+        anim.SetTrigger("isAttack");
+    }
+
+    private void disAttack()
+    {
+        knife.transform.gameObject.GetComponent<CapsuleCollider>().enabled = false;
+    }
+
+    [Command]
+    private void CmdSetIsRun(bool isRunning)
+    {
+        RpcSetIsRun(isRunning);
+    }
+
+    [ClientRpc]
+    private void RpcSetIsRun(bool isRunning)
+    {
+        anim.SetBool("isRun", isRunning);
+    }
+
 }

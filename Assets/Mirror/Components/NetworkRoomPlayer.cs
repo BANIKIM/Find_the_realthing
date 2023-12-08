@@ -149,47 +149,69 @@ namespace Mirror
 
         void DrawPlayerReadyState()
         {
-            GUILayout.BeginArea(new Rect(20f + (index * 100), 200f, 90f, 130f));
+            GUIStyle labelStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 40,
+                fontStyle = FontStyle.Bold
+            };
 
-            GUILayout.Label($"Player [{index + 1}]");
+            GUIStyle outStyle = new GUIStyle(GUI.skin.button)
+            {
+                fontSize = 30,
+                fontStyle = FontStyle.Bold
+            };
+
+
+            GUILayout.BeginArea(new Rect(60f + (index * 300), 150f, 300f, 250f));
+            labelStyle.normal.textColor = Color.green;
+            GUILayout.Label($"Player [{index + 1}]", labelStyle);
 
             if (readyToBegin)
-                GUILayout.Label("Ready");
-            else
-                GUILayout.Label("Not Ready");
-
-            if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("REMOVE"))
             {
-                // This button only shows on the Host for all players other than the Host
-                // Host and Players can't remove themselves (stop the client instead)
-                // Host can kick a Player this way.
+                labelStyle.normal.textColor = Color.yellow;
+                GUILayout.Label("준비 완료", labelStyle);
+            }
+            else
+            {
+                labelStyle.normal.textColor = Color.red;
+                GUILayout.Label("대기", labelStyle);
+            }
+
+            if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("강퇴", outStyle, GUILayout.Width(200), GUILayout.Height(70)))
+            {
                 GetComponent<NetworkIdentity>().connectionToClient.Disconnect();
             }
 
             GUILayout.EndArea();
         }
 
+
         void DrawPlayerReadyButton()
         {
+            GUIStyle buttonStyle = new GUIStyle(GUI.skin.button)
+            {
+                fontSize = 30, // 여기서 원하는 크기로 설정합니다.
+                fontStyle = FontStyle.Bold
+            };
+
             if (NetworkClient.active && isLocalPlayer)
             {
-                GUILayout.BeginArea(new Rect(20f, 300f, 120f, 20f));
+                GUILayout.BeginArea(new Rect(20f + (index * 300), 400f, 200f, 50f));
 
                 if (readyToBegin)
                 {
-                    if (GUILayout.Button("Cancel"))
+                    if (GUILayout.Button("취소", buttonStyle)) // 여기서 스타일을 적용합니다.
                         CmdChangeReadyState(false);
                 }
                 else
                 {
-                    if (GUILayout.Button("Ready"))
+                    if (GUILayout.Button("준비", buttonStyle)) // 여기서 스타일을 적용합니다.
                         CmdChangeReadyState(true);
                 }
 
                 GUILayout.EndArea();
             }
         }
-
         #endregion
     }
 }

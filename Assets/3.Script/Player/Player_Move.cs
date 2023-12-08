@@ -1,48 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECM.Controllers;
+using Mirror;
 
-public class Player_Move : MonoBehaviour
+public class Player_Move : NetworkBehaviour
 {
-
     public Animator anim;
-    public BaseCharacterController controller;
-    [Header("Player")]
     public GameObject knife;
     private bool isAttack = true;
-    private float AttackTime = 0f;
-    // Start is called before the first frame update
+    private float attackTime = 0f;
+
     void Start()
     {
-        anim = GameObject.Find("Player_modle").transform.GetComponent<Animator>(); ;
-        controller = FindObjectOfType<BaseCharacterController>();
+        anim = GetComponent<Animator>();
         knife = transform.GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetChild(3).gameObject;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        OnRun();
-        OnJump();
-        if (isAttack)
-        {
-            OnAttack();
+        if (!isLocalPlayer) return;
 
-        }
-        else if (!isAttack)
+        if (isOwned)
         {
-            AttackTime += Time.deltaTime;
-            if (AttackTime > 2f)
+            OnRun();
+            OnJump();
+            if (isAttack)
             {
-
-                isAttack = true;
-                AttackTime = 0f;
+                OnAttack();
+            }
+            else if (!isAttack)
+            {
+                attackTime += Time.deltaTime;
+                if (attackTime > 2f)
+                {
+                    isAttack = true;
+                    attackTime = 0f;
+                }
             }
         }
-
     }
-
 
     private void OnRun()
     {
@@ -58,7 +54,7 @@ public class Player_Move : MonoBehaviour
 
     private void OnJump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && controller.isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             anim.SetTrigger("isJump");
         }
@@ -68,18 +64,32 @@ public class Player_Move : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-
-            anim.SetTrigger("isAttack");
-            knife.transform.gameObject.GetComponent<CapsuleCollider>().enabled = true;
-            isAttack = false;
+            CmdAttack();
         }
-        Invoke("disAttack", 3f);
+    }
+
+    [Command]
+    private void CmdAttack()
+    {
+        RpcDoAttack();
+    }
+
+    [ClientRpc]
+    private void RpcDoAttack()
+    {
+        knife.transform.gameObject.GetComponent<CapsuleCollider>().enabled = true;
+        isAttack = false;
+        goAttack();
+        Invoke("disAttack", 1.5f);
+    }
+
+    private void goAttack()
+    {
+        anim.SetTrigger("isAttack");
     }
 
     private void disAttack()
     {
         knife.transform.gameObject.GetComponent<CapsuleCollider>().enabled = false;
     }
-
-
 }

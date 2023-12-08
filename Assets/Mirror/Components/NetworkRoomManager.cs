@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -22,7 +23,8 @@ namespace Mirror
         {
             public NetworkConnectionToClient conn;
             public GameObject roomPlayer;
-        }
+            
+        } 
 
         [Header("Room Settings")]
         [FormerlySerializedAs("m_ShowRoomGUI")]
@@ -659,6 +661,9 @@ namespace Mirror
 
         #region optional UI
 
+
+        
+
         /// <summary>
         /// virtual so inheriting classes can roll their own
         /// </summary>
@@ -667,18 +672,30 @@ namespace Mirror
             if (!showRoomGUI)
                 return;
 
-            if (NetworkServer.active && Utils.IsSceneActive(GameplayScene))
+            if (NetworkServer.active && Utils.IsSceneActive(GameplayScene) && PlayerPrefs.GetInt("Player") ==1)
             {
-                GUILayout.BeginArea(new Rect(Screen.width - 150f, 10f, 140f, 30f));
-                if (GUILayout.Button("Return to Room"))
-                    ServerChangeScene(RoomScene);
-                GUILayout.EndArea();
+                //  GUILayout.BeginArea(new Rect(Screen.width - 150f, 10f, 140f, 30f));
+                if (Input.GetKeyDown(KeyCode.Escape))
+                        ServerChangeScene(RoomScene);
+                   // GUILayout.EndArea();*/
             }
 
             if (Utils.IsSceneActive(RoomScene))
-                GUI.Box(new Rect(10f, 180f, 520f, 150f), "PLAYERS");
+            {
+                GUIStyle boxStyle = new GUIStyle(GUI.skin.box)
+                {
+                    fontSize = 60, // 원하는 크기로 조절합니다.
+                    fontStyle = FontStyle.Bold // 원하는 스타일로 조절합니다.
+                };
+
+                GUI.Box(new Rect(10f, 50f, 1900f, 500f), "PLAYERS", boxStyle);
+            }
+
+
+
         }
 
         #endregion
     }
 }
+
