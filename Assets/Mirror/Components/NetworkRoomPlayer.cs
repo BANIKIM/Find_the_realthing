@@ -155,8 +155,14 @@ namespace Mirror
                 fontStyle = FontStyle.Bold
             };
 
+            GUIStyle outStyle = new GUIStyle(GUI.skin.button)
+            {
+                fontSize = 30,
+                fontStyle = FontStyle.Bold
+            };
 
-            GUILayout.BeginArea(new Rect(60f + (index * 300), 250f, 300f, 130f));
+
+            GUILayout.BeginArea(new Rect(60f + (index * 300), 150f, 300f, 250f));
             labelStyle.normal.textColor = Color.green;
             GUILayout.Label($"Player [{index + 1}]", labelStyle);
 
@@ -171,7 +177,7 @@ namespace Mirror
                 GUILayout.Label("´ë±â", labelStyle);
             }
 
-            if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("°­Åð", GUILayout.Width(200), GUILayout.Height(50)))
+            if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("°­Åð", outStyle, GUILayout.Width(200), GUILayout.Height(70)))
             {
                 GetComponent<NetworkIdentity>().connectionToClient.Disconnect();
             }

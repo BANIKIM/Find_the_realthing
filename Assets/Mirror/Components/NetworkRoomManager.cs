@@ -688,7 +688,7 @@ namespace Mirror
                     fontStyle = FontStyle.Bold // 원하는 스타일로 조절합니다.
                 };
 
-                GUI.Box(new Rect(10f, 180f, 1900f, 300f), "PLAYERS", boxStyle);
+                GUI.Box(new Rect(10f, 50f, 1900f, 500f), "PLAYERS", boxStyle);
             }
 
 

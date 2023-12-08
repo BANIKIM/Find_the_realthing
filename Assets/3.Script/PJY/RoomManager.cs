@@ -6,7 +6,8 @@ using Mirror;
 public class RoomManager : NetworkRoomManager
 {
     // 간격 조절을 위한 변수
-    public float spawnInterval = 1f;
+    public float spawnInterval = 2f; // 적절한 간격으로 조절하세요.
+    private float currentX = 0f;
 
     public override void OnRoomServerConnect(NetworkConnectionToClient conn)
     {
@@ -25,8 +26,7 @@ public class RoomManager : NetworkRoomManager
     // 다음 소환 위치의 x 값을 계산하는 함수
     private float GetNextSpawnX()
     {
-        // 현재 소환된 플레이어 수에 따라서 x 값을 계산
-        int playerCount = NetworkServer.connections.Count;
-        return playerCount * spawnInterval-2f;
+        currentX += spawnInterval; // 현재 위치에 간격을 추가합니다.
+        return currentX;
     }
 }
