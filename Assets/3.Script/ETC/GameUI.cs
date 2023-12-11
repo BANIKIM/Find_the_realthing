@@ -9,7 +9,9 @@ public class GameUI : NetworkBehaviour
 {
     public Text playerCountText;
     public GameObject winPanel;
+    private GameObject TimePnal;
     public Text survivalTimeText;
+    public Text survivalTimeText2;
 
     private float surTime = 0f;
     [SyncVar(hook = nameof(OnPlayerCountChanged))]
@@ -19,6 +21,7 @@ public class GameUI : NetworkBehaviour
     private void Start()
     {
         winPanel = transform.GetChild(1).gameObject;
+        TimePnal = transform.GetChild(2).gameObject;
         SetPlayer();
         StartCoroutine(UpdateTime());
     }
@@ -71,6 +74,7 @@ public class GameUI : NetworkBehaviour
     void RpcDisplayWinPanel()
     {
         winPanel.SetActive(true);
+        TimePnal.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         isGameEnded = true; // 게임 종료 상태로 설정
@@ -107,6 +111,7 @@ public class GameUI : NetworkBehaviour
         {
             surTime += Time.deltaTime;
             survivalTimeText.text = $"생존 시간: {Mathf.Floor(surTime)}초";
+            survivalTimeText2.text= $"생존 시간: {Mathf.Floor(surTime)}초";
             yield return null;
 
         }

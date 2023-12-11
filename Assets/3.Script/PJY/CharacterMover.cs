@@ -7,8 +7,8 @@ using Mirror;
 
 public class CharacterMover : NetworkBehaviour
 {
-    public float walkingSpeed = 4f;
-    public float runningSpeed = 6f;
+    public float walkingSpeed = 3f;
+    public float runningSpeed = 5f;
     public float jumpSpeed = 5f;
     public float gravity = 20.0f;
     public Camera playerCamera;
@@ -18,6 +18,8 @@ public class CharacterMover : NetworkBehaviour
     private bool isAttack = true;
     private float attackTime = 0f;
     private bool _isRun = false;
+
+    public AudioSource audio; 
 
     public GameObject[] Win_Effect;
     public GameObject Win_E;
@@ -232,12 +234,14 @@ public class CharacterMover : NetworkBehaviour
 
     IEnumerator Winer()
     {
+        
         Win_E.SetActive(true);
         a = true;
         while (gameUI.isGameEnded)
         {
             int random = Random.Range(0, 4);
             Win_Effect[random].SetActive(true);
+            audio.PlayOneShot(AudioManager.instance.SFXClip[6]);
             yield return new WaitForSeconds(1.5f);
             for (int i = 0; i < Win_Effect.Length; i++)
             {
