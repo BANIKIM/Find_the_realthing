@@ -13,9 +13,11 @@ public class GameUI : NetworkBehaviour
     private GameObject TimePnal;
     public Text survivalTimeText;
     public Text survivalTimeText2;
+    public Text survivalTimeText3;
     public bool isDie_ser = false;
     public bool isDie_clr = false;
-    private float surTime = 0f;
+    private float winsurTime = 0f;
+    private float losesurTiem = 0f;
     [SyncVar(hook = nameof(OnPlayerCountChanged))]
     private int playerCount;
     public bool isGameEnded = false; // 게임 종료 여부를 나타내는 변수
@@ -26,6 +28,7 @@ public class GameUI : NetworkBehaviour
         TimePnal = transform.GetChild(2).gameObject;
         SetPlayer();
         StartCoroutine(UpdateTime());
+        StartCoroutine(UpdateTime2());
     }
 
     void Update()
@@ -77,10 +80,12 @@ public class GameUI : NetworkBehaviour
     {
         if (isServer)
         {
+
             int playerCount = PlayerPrefs.GetInt("Player");
             playerCount--; // 플레이어 수 감소
             RpcUpdatePlayerCount(playerCount);
             PlayerPrefs.SetInt("Player", playerCount); // 플레이어 수 저장
+            losesurTiem = Time.timeScale = 1;
             // 플레이어 수 감소 후, 승리 조건 확인
         }
 
@@ -101,9 +106,21 @@ public class GameUI : NetworkBehaviour
     {
         while (!isGameEnded)
         {
-            surTime += Time.deltaTime;
-            survivalTimeText.text = $"생존 시간: {Mathf.Floor(surTime)}초";
-            survivalTimeText2.text = $"생존 시간: {Mathf.Floor(surTime)}초";
+            winsurTime += Time.deltaTime;
+            survivalTimeText.text = $"생존 시간: {Mathf.Floor(winsurTime)}초";
+            survivalTimeText2.text = $"생존 시간: {Mathf.Floor(winsurTime)}초";
+          
+            yield return null;
+
+        }
+    }
+    IEnumerator UpdateTime2()
+    {
+        while (!isGameEnded)
+        {
+            losesurTiem += Time.deltaTime;
+            survivalTimeText3.text =$"생존 시간: {Mathf.Floor(losesurTiem)}초";
+
             yield return null;
 
         }
