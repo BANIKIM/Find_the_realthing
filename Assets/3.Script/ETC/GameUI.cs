@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class GameUI : NetworkBehaviour
 {
     public Text playerCountText;
+    public Text Winer;
     public GameObject winPanel;
     private GameObject TimePnal;
     public Text survivalTimeText;
@@ -17,13 +18,14 @@ public class GameUI : NetworkBehaviour
     [SyncVar(hook = nameof(OnPlayerCountChanged))]
     private int playerCount;
     public bool isGameEnded = false; // 게임 종료 여부를 나타내는 변수
-
+    
     private void Start()
     {
         winPanel = transform.GetChild(1).gameObject;
         TimePnal = transform.GetChild(2).gameObject;
         SetPlayer();
         StartCoroutine(UpdateTime());
+        PlayerPrefs.SetString("Win", "승 리");
     }
 
     void Update()
@@ -73,6 +75,7 @@ public class GameUI : NetworkBehaviour
     [ClientRpc]
     void RpcDisplayWinPanel()
     {
+        Winer.text = PlayerPrefs.GetString("Win");
         winPanel.SetActive(true);
         TimePnal.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
@@ -89,6 +92,7 @@ public class GameUI : NetworkBehaviour
             playerCount--; // 플레이어 수 감소
             RpcUpdatePlayerCount(playerCount);
             PlayerPrefs.SetInt("Player", playerCount); // 플레이어 수 저장
+            PlayerPrefs.SetString("Win", "패 배");
 
             // 플레이어 수 감소 후, 승리 조건 확인
         }
