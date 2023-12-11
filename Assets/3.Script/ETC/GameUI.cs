@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class GameUI : NetworkBehaviour
 {
     public Text playerCountText;
     public GameObject winPanel;
+    public Text Win;
 
+    [SyncVar(hook = nameof(OnGameEndedChanged))]
     private bool isGameEnded = false; // 게임 종료 여부를 나타내는 변수
+
+    [SyncVar(hook = nameof(OnGameResultChanged))]
+    private string gameResult = ""; // 게임 결과를 나타내는 변수
 
     private void Start()
     {
@@ -25,11 +29,6 @@ public class GameUI : NetworkBehaviour
             UpdatePlayerCount(); // 플레이어 숫자 갱신
             CheckWinCondition();
         }
-
-       /* if (isGameEnded && Input.anyKeyDown) // 게임 종료 후 키 입력 시 새로운 씬으로 이동
-        {
-            SceneManager.LoadScene("GameRoom2");
-        }*/
     }
 
     [ClientRpc]
@@ -58,17 +57,18 @@ public class GameUI : NetworkBehaviour
     {
         if (PlayerPrefs.GetInt("Player") == 1)
         {
-            RpcDisplayWinPanel();
+            gameResult = "승리";
+            isGameEnded = true;
         }
     }
 
     [ClientRpc]
     void RpcDisplayWinPanel()
     {
+        Win.text = gameResult;
         winPanel.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        isGameEnded = true; // 게임 종료 상태로 설정
     }
 
     // 플레이어가 죽었을 때 호출됩니다.
@@ -79,9 +79,21 @@ public class GameUI : NetworkBehaviour
             int playerCount = PlayerPrefs.GetInt("Player");
             playerCount--; // 플레이어 수 감소
             PlayerPrefs.SetInt("Player", playerCount); // 플레이어 수 저장
-
-            // 플레이어 수 감소 후, 승리 조건 확인
-           Invoke("CheckWinCondition", 2f);
         }
+    }
+
+    // isGameEnded가 변경될 때 호출됩니다.
+    void OnGameEndedChanged(bool oldValue, bool newValue)
+    {
+        if (newValue)
+        {
+            RpcDisplayWinPanel();
+        }
+    }
+
+    // gameResult가 변경될 때 호출됩니다.
+    void OnGameResultChanged(string oldValue, string newValue)
+    {
+        Win.text = newValue;
     }
 }
