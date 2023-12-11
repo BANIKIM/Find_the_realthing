@@ -72,7 +72,7 @@ public class CharacterMover : NetworkBehaviour
         {
             return;
         }
-        if (isDie) return;
+        //if (isDie) return; ¿òÁ÷ÀÌ´Â°Å
         // We are grounded, so recalculate move direction based on axes
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
@@ -155,10 +155,12 @@ public class CharacterMover : NetworkBehaviour
             anim.SetTrigger("isDie");
 
             // Disable collision and physics for the character when it dies
-
+            GameObject player = transform.GetChild(1).gameObject;
             coll.enabled = false;
             rig.isKinematic = true;
-
+            player.gameObject.SetActive(false);
+            walkingSpeed = walkingSpeed * 2;
+            runningSpeed = runningSpeed * 2;
 
         }
     }
@@ -172,7 +174,6 @@ public class CharacterMover : NetworkBehaviour
         if (other.CompareTag("Attack") && !isDie)
         {
            // PlayerPrefs.SetString("Win", "ÆÐ ¹è");
-           
             isDie = true;
             // Set isDie on the server so it gets synchronized to all clients
             CmdDie();
@@ -184,8 +185,7 @@ public class CharacterMover : NetworkBehaviour
     [Command]
     void CmdDie()
     {
-        isDie = true;
-        
+        isDie = true;       
     }
 
 
@@ -235,9 +235,9 @@ public class CharacterMover : NetworkBehaviour
     }
 
 
+    //ÆøÁ×ÀÌÆåÆ®
     IEnumerator Winer()
     {
-        
         Win_E.SetActive(true);
         a = true;
         while (gameUI.isGameEnded)
