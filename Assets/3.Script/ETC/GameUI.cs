@@ -25,7 +25,6 @@ public class GameUI : NetworkBehaviour
         TimePnal = transform.GetChild(2).gameObject;
         SetPlayer();
         StartCoroutine(UpdateTime());
-        PlayerPrefs.SetString("Win", "승 리");
     }
 
     void Update()
@@ -75,7 +74,7 @@ public class GameUI : NetworkBehaviour
     [ClientRpc]
     void RpcDisplayWinPanel()
     {
-        Winer.text = PlayerPrefs.GetString("Win");
+        
         winPanel.SetActive(true);
         TimePnal.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
@@ -92,9 +91,10 @@ public class GameUI : NetworkBehaviour
             playerCount--; // 플레이어 수 감소
             RpcUpdatePlayerCount(playerCount);
             PlayerPrefs.SetInt("Player", playerCount); // 플레이어 수 저장
+           
             // 플레이어 수 감소 후, 승리 조건 확인
         }
-        PlayerPrefs.SetString("Win", "패 배");
+        Winer.text = PlayerPrefs.GetString("Win");
     }
 
     [ClientRpc]

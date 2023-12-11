@@ -44,6 +44,7 @@ public class CharacterMover : NetworkBehaviour
 
     void Start()
     {
+        PlayerPrefs.SetString("Win", "½Â ¸®");
         characterController = GetComponent<CharacterController>();
         knife = transform.GetChild(1).GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetChild(3).gameObject;
         gameUI = GameUI.FindObjectOfType<GameUI>();
@@ -170,6 +171,7 @@ public class CharacterMover : NetworkBehaviour
 
         if (other.CompareTag("Attack") && !isDie)
         {
+            PlayerPrefs.SetString("Win", "ÆÐ ¹è");
             isDie = true;
             // Set isDie on the server so it gets synchronized to all clients
             CmdDie();
