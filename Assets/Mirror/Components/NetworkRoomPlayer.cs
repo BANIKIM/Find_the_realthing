@@ -164,7 +164,7 @@ namespace Mirror
 
             GUILayout.BeginArea(new Rect(60f + (index * 300), 150f, 300f, 250f));
             labelStyle.normal.textColor = Color.green;
-            GUILayout.Label($"Player [{index + 1}]", labelStyle);
+            GUILayout.Label($"{index + 1} Player", labelStyle);
 
             if (readyToBegin)
             {
