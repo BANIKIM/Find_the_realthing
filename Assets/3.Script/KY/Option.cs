@@ -22,35 +22,39 @@ public class Option : MonoBehaviour
     public AudioMixer audioMixer;
     public Slider[] Audio_Sliders;
 
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            return;
-        }
-    }
-
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPause)
             {
-                OptionObj.SetActive(false);
-                isPause = false;
+                OffOption();
             }
             else
             {
-                OptionObj.SetActive(true);
-                isPause = true;
+                OnOption();
             }
         }
     }
+
+    public void OnOption()
+    {
+        OptionSetting(true);
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+    }
+    public void OffOption()
+    {
+        OptionSetting(false);
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+    public void OptionSetting(bool isGame)
+    {
+        OptionObj.SetActive(isGame);
+        isPause = isGame;
+    }
+
     public void Master_SetVolume()
     {
         audioMixer.SetFloat("Master", Audio_Sliders[(int)Channel.Master].value);
