@@ -8,12 +8,11 @@ using UnityEngine.SceneManagement;
 public class GameUI : NetworkBehaviour
 {
     public Text playerCountText;
-    public Text Winer;
     public GameObject winPanel;
     private GameObject TimePnal;
     public Text survivalTimeText;
     public Text survivalTimeText2;
-
+    public bool isDie = false;
     private float surTime = 0f;
     [SyncVar(hook = nameof(OnPlayerCountChanged))]
     private int playerCount;
@@ -66,7 +65,16 @@ public class GameUI : NetworkBehaviour
     [ClientRpc]
     void RpcDisplayWinPanel()
     {
-        
+        if(isDie)
+        {
+            winPanel.transform.GetChild(0).gameObject.SetActive(false);
+        }
+        else
+        {
+            winPanel.transform.GetChild(1).gameObject.SetActive(false);
+
+        }
+
         winPanel.SetActive(true);
         TimePnal.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
@@ -83,7 +91,6 @@ public class GameUI : NetworkBehaviour
             playerCount--; // 플레이어 수 감소
             RpcUpdatePlayerCount(playerCount);
             PlayerPrefs.SetInt("Player", playerCount); // 플레이어 수 저장
-            Winer.text = PlayerPrefs.GetString("Win");
             // 플레이어 수 감소 후, 승리 조건 확인
         }
         

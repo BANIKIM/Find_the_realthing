@@ -156,7 +156,7 @@ public class CharacterMover : NetworkBehaviour
 
             // Disable collision and physics for the character when it dies
             GameObject player = transform.GetChild(1).gameObject;
-            coll.enabled = false;
+            coll.radius = 0.001f;
             rig.isKinematic = true;
             player.gameObject.SetActive(false);
             walkingSpeed = walkingSpeed * 2;
@@ -178,7 +178,7 @@ public class CharacterMover : NetworkBehaviour
             // Set isDie on the server so it gets synchronized to all clients
             CmdDie();
             gameUI.OnPlayerDie();
-            
+            gameUI.isDie = true;
         }
     }
 
