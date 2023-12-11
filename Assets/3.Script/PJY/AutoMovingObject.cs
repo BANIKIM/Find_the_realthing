@@ -3,10 +3,10 @@ using Mirror;
 
 public class AutoMovingObject : NetworkBehaviour
 {
-    public float moveRange = 5f; // 이동 범위
+    public float moveRange = 4f; // 이동 범위
     public float minStopTime = 3f; // 이동 멈춤 최소 시간
     public float maxStopTime = 5f; // 이동 멈춤 최대 시간
-    public float walkingSpeed = 4f; // 걷기 속도
+    public float walkingSpeed = 2f; // 걷기 속도
     private Vector3 targetPosition;
     private float startTime;
     private bool willTurn = false; // 방향 전환 여부
