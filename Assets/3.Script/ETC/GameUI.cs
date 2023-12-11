@@ -35,17 +35,9 @@ public class GameUI : NetworkBehaviour
             CheckWinCondition();
         }
 
-        /* if (isGameEnded && Input.anyKeyDown) // 게임 종료 후 키 입력 시 새로운 씬으로 이동
-         {
-             SceneManager.LoadScene("GameRoom2");
-         }*/
+
     }
 
-    /*[ClientRpc]
-    void RpcUpdatePlayerCount(int playerCount)
-    {
-        playerCountText.text = $"플레이어 수: {playerCount}";
-    }*/
 
     [Server]
     void UpdatePlayerCount()
@@ -91,10 +83,10 @@ public class GameUI : NetworkBehaviour
             playerCount--; // 플레이어 수 감소
             RpcUpdatePlayerCount(playerCount);
             PlayerPrefs.SetInt("Player", playerCount); // 플레이어 수 저장
-           
+            Winer.text = PlayerPrefs.GetString("Win");
             // 플레이어 수 감소 후, 승리 조건 확인
         }
-        Winer.text = PlayerPrefs.GetString("Win");
+        
     }
 
     [ClientRpc]

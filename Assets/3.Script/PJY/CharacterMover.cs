@@ -171,7 +171,8 @@ public class CharacterMover : NetworkBehaviour
 
         if (other.CompareTag("Attack") && !isDie)
         {
-            PlayerPrefs.SetString("Win", "패 배");
+           // PlayerPrefs.SetString("Win", "패 배");
+           
             isDie = true;
             // Set isDie on the server so it gets synchronized to all clients
             CmdDie();
