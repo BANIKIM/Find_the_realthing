@@ -31,7 +31,7 @@ public class CharacterMover : NetworkBehaviour
     public CharacterController coll;
     public Rigidbody rig;
     [SyncVar(hook = nameof(OnDieChanged))]
-    private bool isDie = false;
+    public bool isDie = false;
 
     CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
@@ -76,7 +76,11 @@ public class CharacterMover : NetworkBehaviour
         // We are grounded, so recalculate move direction based on axes
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
-
+        Debug.Log(isDie);
+        if (isDie)
+        {
+            gameUI.Win_Loser.transform.GetChild(1).gameObject.SetActive(false);
+        }
         // Press Left Shift to run
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
         float curSpeedX = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Vertical") : 0;
@@ -175,10 +179,11 @@ public class CharacterMover : NetworkBehaviour
         {
            // PlayerPrefs.SetString("Win", "ฦะ น่");
             isDie = true;
+ 
             // Set isDie on the server so it gets synchronized to all clients
             CmdDie();
             gameUI.OnPlayerDie();
-            gameUI.isDie = true;
+
         }
     }
 

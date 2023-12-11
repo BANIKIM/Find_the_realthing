@@ -8,12 +8,13 @@ using UnityEngine.SceneManagement;
 public class GameUI : NetworkBehaviour
 {
     public Text playerCountText;
-    public GameObject winPanel;
-    public GameObject losePanel;
+    public GameObject Win_Loser;
+
     private GameObject TimePnal;
     public Text survivalTimeText;
     public Text survivalTimeText2;
-    public bool isDie = false;
+    public bool isDie_ser = false;
+    public bool isDie_clr = false;
     private float surTime = 0f;
     [SyncVar(hook = nameof(OnPlayerCountChanged))]
     private int playerCount;
@@ -21,9 +22,8 @@ public class GameUI : NetworkBehaviour
 
     private void Start()
     {
-        winPanel = transform.GetChild(1).gameObject;
-        losePanel = transform.GetChild(2).gameObject;
-        TimePnal = transform.GetChild(3).gameObject;
+        Win_Loser = transform.GetChild(1).gameObject;
+        TimePnal = transform.GetChild(2).gameObject;
         SetPlayer();
         StartCoroutine(UpdateTime());
     }
@@ -35,8 +35,6 @@ public class GameUI : NetworkBehaviour
             UpdatePlayerCount(); // 플레이어 숫자 갱신
             CheckWinCondition();
         }
-
-
     }
 
 
@@ -61,24 +59,13 @@ public class GameUI : NetworkBehaviour
         if (PlayerPrefs.GetInt("Player") == 1)
         {
             RpcDisplayWinPanel();
-
-            if (isDie)
-            {
-                losePanel.SetActive(true);
-            }
         }
-
     }
 
     [ClientRpc]
     void RpcDisplayWinPanel()
     {
-
-
-        if (!isDie)
-        {
-            winPanel.SetActive(true);
-        }
+        Win_Loser.SetActive(true);
         TimePnal.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
