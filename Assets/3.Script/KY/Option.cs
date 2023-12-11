@@ -14,6 +14,9 @@ public enum Channel
 public class Option : MonoBehaviour
 {
     public static Option instance = null;
+   
+    [SerializeField] private GameObject OptionObj;
+    private bool isPause = false;
 
     [Header("¿Àµð¿À ¹Í¼­")]
     public AudioMixer audioMixer;
@@ -32,6 +35,22 @@ public class Option : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (isPause)
+            {
+                OptionObj.SetActive(false);
+                isPause = false;
+            }
+            else
+            {
+                OptionObj.SetActive(true);
+                isPause = true;
+            }
+        }
+    }
     public void Master_SetVolume()
     {
         audioMixer.SetFloat("Master", Audio_Sliders[(int)Channel.Master].value);
