@@ -9,6 +9,7 @@ public class GameUI : NetworkBehaviour
 {
     public Text playerCountText;
     public GameObject winPanel;
+    public GameObject losePanel;
     private GameObject TimePnal;
     public Text survivalTimeText;
     public Text survivalTimeText2;
@@ -17,11 +18,12 @@ public class GameUI : NetworkBehaviour
     [SyncVar(hook = nameof(OnPlayerCountChanged))]
     private int playerCount;
     public bool isGameEnded = false; // 게임 종료 여부를 나타내는 변수
-    
+
     private void Start()
     {
         winPanel = transform.GetChild(1).gameObject;
-        TimePnal = transform.GetChild(2).gameObject;
+        losePanel = transform.GetChild(2).gameObject;
+        TimePnal = transform.GetChild(3).gameObject;
         SetPlayer();
         StartCoroutine(UpdateTime());
     }
@@ -59,23 +61,24 @@ public class GameUI : NetworkBehaviour
         if (PlayerPrefs.GetInt("Player") == 1)
         {
             RpcDisplayWinPanel();
+
+            if (isDie)
+            {
+                losePanel.SetActive(true);
+            }
         }
+
     }
 
     [ClientRpc]
     void RpcDisplayWinPanel()
     {
-        if(isDie)
-        {
-            winPanel.transform.GetChild(0).gameObject.SetActive(false);
-        }
-        else
-        {
-            winPanel.transform.GetChild(1).gameObject.SetActive(false);
 
-        }
 
-        winPanel.SetActive(true);
+        if (!isDie)
+        {
+            winPanel.SetActive(true);
+        }
         TimePnal.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -93,7 +96,7 @@ public class GameUI : NetworkBehaviour
             PlayerPrefs.SetInt("Player", playerCount); // 플레이어 수 저장
             // 플레이어 수 감소 후, 승리 조건 확인
         }
-        
+
     }
 
     [ClientRpc]
@@ -113,7 +116,7 @@ public class GameUI : NetworkBehaviour
         {
             surTime += Time.deltaTime;
             survivalTimeText.text = $"생존 시간: {Mathf.Floor(surTime)}초";
-            survivalTimeText2.text= $"생존 시간: {Mathf.Floor(surTime)}초";
+            survivalTimeText2.text = $"생존 시간: {Mathf.Floor(surTime)}초";
             yield return null;
 
         }
