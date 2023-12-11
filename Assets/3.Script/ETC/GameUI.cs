@@ -9,15 +9,18 @@ public class GameUI : NetworkBehaviour
 {
     public Text playerCountText;
     public GameObject winPanel;
+    public Text survivalTimeText;
 
+    private float surTime = 0f;
     [SyncVar(hook = nameof(OnPlayerCountChanged))]
     private int playerCount;
-    private bool isGameEnded = false; // 게임 종료 여부를 나타내는 변수
+    public bool isGameEnded = false; // 게임 종료 여부를 나타내는 변수
 
     private void Start()
     {
         winPanel = transform.GetChild(1).gameObject;
         SetPlayer();
+        StartCoroutine(UpdateTime());
     }
 
     void Update()
@@ -28,10 +31,10 @@ public class GameUI : NetworkBehaviour
             CheckWinCondition();
         }
 
-       /* if (isGameEnded && Input.anyKeyDown) // 게임 종료 후 키 입력 시 새로운 씬으로 이동
-        {
-            SceneManager.LoadScene("GameRoom2");
-        }*/
+        /* if (isGameEnded && Input.anyKeyDown) // 게임 종료 후 키 입력 시 새로운 씬으로 이동
+         {
+             SceneManager.LoadScene("GameRoom2");
+         }*/
     }
 
     /*[ClientRpc]
@@ -97,5 +100,15 @@ public class GameUI : NetworkBehaviour
     private void OnPlayerCountChanged(int oldCount, int newCount)
     {
         playerCountText.text = $"플레이어 수: {newCount}";
+    }
+    IEnumerator UpdateTime()
+    {
+        while (!isGameEnded)
+        {
+            surTime += Time.deltaTime;
+            survivalTimeText.text = $"생존 시간: {Mathf.Floor(surTime)}초";
+            yield return null;
+
+        }
     }
 }

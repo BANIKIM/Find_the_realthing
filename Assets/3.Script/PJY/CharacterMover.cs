@@ -19,6 +19,9 @@ public class CharacterMover : NetworkBehaviour
     private float attackTime = 0f;
     private bool _isRun = false;
 
+    public GameObject[] Win_Effect;
+    public GameObject Win_E;
+
     private GameUI gameUI;
 
     [Header("Die")]
@@ -35,6 +38,8 @@ public class CharacterMover : NetworkBehaviour
     [HideInInspector]
     public bool canMove = true;
 
+    private bool a = false;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -49,6 +54,12 @@ public class CharacterMover : NetworkBehaviour
         if (!isLocalPlayer)
         {
             playerCamera.gameObject.SetActive(false);
+        }
+        Win_Effect = new GameObject[4];
+        Win_E = transform.GetChild(2).gameObject;
+        for (int i = 0; i < Win_Effect.Length; i++)
+        {
+            Win_Effect[i] = transform.GetChild(2).gameObject.transform.GetChild(i).gameObject;
         }
     }
 
@@ -126,6 +137,11 @@ public class CharacterMover : NetworkBehaviour
             }
         }
 
+        //추가부분
+        if(gameUI.isGameEnded && !a)
+        {
+            StartCoroutine(Winer());
+        }
 
 
     }
@@ -213,4 +229,22 @@ public class CharacterMover : NetworkBehaviour
         anim.SetBool("isRun", isRunning);
     }
 
+
+    IEnumerator Winer()
+    {
+        Win_E.SetActive(true);
+        a = true;
+        while (gameUI.isGameEnded)
+        {
+            int random = Random.Range(0, 4);
+            Win_Effect[random].SetActive(true);
+            yield return new WaitForSeconds(1.5f);
+            for (int i = 0; i < Win_Effect.Length; i++)
+            {
+                Win_Effect[i].SetActive(false);
+            }
+            yield return null;
+        }
+       
+    }
 }
