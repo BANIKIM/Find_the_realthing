@@ -157,6 +157,7 @@ public class CharacterMover : NetworkBehaviour
             // Disable collision and physics for the character when it dies
             GameObject player = transform.GetChild(1).gameObject;
             coll.radius = 0.001f;
+            coll.height = 0.1f;
             rig.isKinematic = true;
             player.gameObject.SetActive(false);
             walkingSpeed = walkingSpeed * 2;
