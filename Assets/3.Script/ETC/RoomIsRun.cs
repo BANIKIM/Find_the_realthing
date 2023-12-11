@@ -8,7 +8,7 @@ public class RoomIsRun : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        animator.SetBool("isRun", true);
+       // animator.SetBool("isRun", true);
 
     }
 

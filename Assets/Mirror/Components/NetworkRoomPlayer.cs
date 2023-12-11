@@ -169,7 +169,7 @@ namespace Mirror
             if (readyToBegin)
             {
                 labelStyle.normal.textColor = Color.yellow;
-                GUILayout.Label("준비 완료", labelStyle);
+                GUILayout.Label("준비", labelStyle);
             }
             else
             {
