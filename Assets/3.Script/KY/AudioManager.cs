@@ -26,7 +26,6 @@ public class AudioManager : MonoBehaviour
     public AudioClip[] BGMClip;
     public AudioClip[] SFXClip;
 
-    [SerializeField] private AudioSource MainBGM;
     private void Awake()
     {
         if (instance == null) 
@@ -38,8 +37,6 @@ public class AudioManager : MonoBehaviour
         {
             return;
         }
-        MainBGM.Play();
     }
-    
 
 }
